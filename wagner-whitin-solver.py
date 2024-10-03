@@ -61,14 +61,20 @@ class WagnerWhitinSolver():
     # print Q_t*
     def get_q_star(self):
         q_stars = {}
-        for i in self.j_ts:
-            if i not in q_stars:
-                q_stars[i] = 0
-        for i in range(self.period):
-            current_period = self.j_ts[i]  
-            if current_period not in q_stars:
-                q_stars[current_period] = 0
-            q_stars[current_period] += self.period_demands[i]
+        t = self.period
+        while t != 0:
+            j_t = self.j_ts[t-1] 
+            if isinstance(j_t, tuple):
+                j_t_value = j_t[1]
+            else:
+                j_t_value = j_t
+
+            if j_t_value not in q_stars:
+                q_stars[j_t_value] = sum(self.period_demands[j_t_value-1: t])
+            
+            t = j_t_value - 1 
+            
+        q_stars = dict(sorted(q_stars.items()))
         print("Q_t*:   ", q_stars)
 
     # print j_t* for a given period
@@ -93,3 +99,5 @@ if __name__ == '__main__':
     ww.get_q_star()
     ww.get_j_t_star(9)
     
+
+
